@@ -1,0 +1,12 @@
+[submodule "StaticScript"]
+	path = StaticScript
+	url = https://github.com/deepaksirone/StaticScript
+[submodule "baseline-tap"]
+	path = baseline-tap
+	url = https://github.com/deepaksirone/baseline-tap
+[submodule "trigger-shim"]
+	path = trigger-shim
+	url = https://github.com/deepaksirone/trigger-shim
+[submodule "action-shim"]
+	path = action-shim
+	url = https://github.com/deepaksirone/action-shim
