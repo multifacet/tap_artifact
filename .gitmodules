@@ -10,3 +10,12 @@
 [submodule "action-shim"]
 	path = action-shim
 	url = https://github.com/deepaksirone/action-shim
+[submodule "rule-cryptor"]
+	path = rule-cryptor
+	url = https://github.com/deepaksirone/rule-cryptor
+[submodule "tap-client"]
+	path = tap-client
+	url = https://github.com/deepaksirone/tap-client
+[submodule "keystone"]
+	path = keystone
+	url = https://github.com/deepaksirone/keystone
