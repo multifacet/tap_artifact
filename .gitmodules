@@ -19,3 +19,6 @@
 [submodule "keystone"]
 	path = keystone
 	url = https://github.com/deepaksirone/keystone
+[submodule "static_script_runtime"]
+	path = static_script_runtime
+	url = https://github.com/deepaksirone/static_script_runtime
