@@ -29,24 +29,34 @@ The trigger shim serves as the source of event data as well as the source of eve
 
 Clone and build `wrk` on the trigger service machine as follows:
 
-```git clone https://github.com/deepaksirone/wrk && cd wrk && make```
+```
+git clone https://github.com/deepaksirone/wrk && cd wrk && make
+```
 
 Clone and build the trigger service repository on the trigger service machine:
 
-```git clone https://github.com/deepaksirone/trigger-shim && cd trigger-shim && ./build.sh```
+```
+git clone https://github.com/deepaksirone/trigger-shim && cd trigger-shim && ./build.sh
+```
 
 To run the trigger service serving encrypted trigger data (for Spigot and Spigot without enclaves) run:
 
-```sudo python3.7 server.py 0.0.0.0 80 --encrypted```
+```
+sudo python3.7 server.py 0.0.0.0 80 --encrypted
+```
 
 ## Setting up Action Shim <a name="action-shim"></a>
 Clone and build the trigger service repository on the trigger service machine:
 
-```git clone https://github.com/deepaksirone/action-shim && cd action-shim && ./build.sh```
+```
+git clone https://github.com/deepaksirone/action-shim && cd action-shim && ./build.sh
+```
 
 Run the action service using:
 
-```sudo python3.7 server.py 0.0.0.0 80```
+```
+sudo python3.7 server.py 0.0.0.0 80
+```
 
 ## Running Spigot Benchmarks on Real Hardware <a name="spigot"></a>
 This subsection assumes access to the StarFive VisionFive SBC (referred to as the board) preloaded with all the benchmark applets at `/home/riscv/artifact_eval`. All the enclave benchmark packages (the 10 chosen for evaluation) are located at `/home/riscv/artifact_eval/benchmarks_prebuilt`. All the files starting with `enc_rule_<TypeScript_fname>.ke` are Spigot applet enclave packages corresponding to the TypeScript applet \<TypeScript_fname\> . All the files starting with `rule_process_<TypeScript_fname>.ke` are Spigot benchmark packages that do not use enclaves. 
@@ -57,17 +67,22 @@ Open a terminal connection to the board and navigate to the artifact directory (
 
 Load the keystone kernel module:
 
-`$ sudo insmod keystone-driver.ko`
+```
+$ sudo insmod keystone-driver.ko
+```
 
 Run the time keeping enclave to synchronize the SM time:
 
-`$ ./ntp_client.ke`
+```
+$ ./ntp_client.ke
+```
 
 Start the Keystore by running:
 
-`$ cd keystore `
-
-`$ ./keystore.ke`
+```
+$ cd keystore 
+$ ./keystore.ke
+```
 
 The Keystore will listen on port 7777 on the board. All the benchmark rules are pre-registered with the Keystore.
 
@@ -75,16 +90,23 @@ The Keystore will listen on port 7777 on the board. All the benchmark rules are 
 
 Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using 
 
-`$ sudo ./enc_rule_<TypeScript_fname>.ke > spigot_<TypeScript_fname>.log`
+```
+$ sudo ./enc_rule_<TypeScript_fname>.ke > spigot_<TypeScript_fname>.log
+```
 
 This will launch the applet enclave which then connects to the keystore to retrieve the keys needed to decrypt the applet. The host process listens on port 80 and waits for event notifications. On receving an event notification (from `wrk`) the applet enclave will fetch encrypted trigger data from the trigger shim, decrypt it and run the applet on it. It then encrypts the results and sends it to the action service
 
 To start sending event notifications, open a terminal to the trigger shim machine and run:
 
-`$ cd wrk`
-`$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > spigot_<TypeScript_fname>.<num_connections>_<num_threads>.log`
+```
+$ cd wrk
+$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > spigot_<TypeScript_fname>.<num_connections>_<num_threads>.log
+```
 
-where `{(<num_connections>, <num_threads>)} can be {(1, 1), (2, 2), (3, 3)}` (See Figure 5). After every run of `wrk` restart the enclave by Ctrl^C (a few times) followed by `$ sudo ./enc_rule_<TypeScript_fname>.ke `.
+where `{(<num_connections>, <num_threads>)} can be {(1, 1), (2, 2), (3, 3)}` (See Figure 5). After every run of `wrk` restart the enclave by Ctrl^C (a few times) followed by:
+```
+$ sudo ./enc_rule_<TypeScript_fname>.ke
+```
 
 Verify that the run worked by checking the logs of the action service.
 
@@ -94,14 +116,18 @@ After every run of `wrk`, statistics of the run are printed which are redirected
 
 Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using 
 
-`$ sudo ./rule_process_<TypeScript_fname>.ke > spigot_base_<TypeScript_fname>.log`
+```
+$ sudo ./rule_process_<TypeScript_fname>.ke > spigot_base_<TypeScript_fname>.log
+```
 
 This will launch the applet enclave which then connects to the keystore to retrieve the keys needed to decrypt the applet. The host process listens on port 80 and waits for event notifications. On receving an event notification (from `wrk`) the applet enclave will fetch encrypted trigger data from the trigger shim, decrypt it and run the applet on it. It then encrypts the results and sends it to the action service
 
 To start sending event notifications, open a terminal to the trigger shim machine and run:
 
-`$ cd wrk`
-`$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > spigot_base_<TypeScript_fname>.<num_connections>_<num_threads>.log`
+```
+$ cd wrk
+$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > spigot_base_<TypeScript_fname>.<num_connections>_<num_threads>.log
+```
 
 where `{(<num_connections>, <num_threads>)} can be {(1, 1), (2, 2), (3, 3)}` (See Figure 5). After every run of `wrk` restart the enclave by Ctrl^C (a few times) followed by `$ sudo ./rule_process_<TypeScript_fname>.ke `.
 
@@ -112,22 +138,28 @@ After every run of `wrk`, statistics of the run are printed which are redirected
 ### Running the Interpreted Baseline
 Make sure that the trigger and action shims are setup and running. The trigger shim should *not* be running with the `--encrypted` flag, start the trigger shim using:
 
-```sudo python3.7 server.py 0.0.0.0 80```
+```
+sudo python3.7 server.py 0.0.0.0 80
+```
 
 `/home/riscv/baseline-tap/server.js` provides the baseline implementation of a NodeJS TAP. All the TypeScript applets are stored at `/home/riscv/baseline-tap/applets`. Line 8 of `server.js` points to the applet that is loaded, edit it to the applet that is going to be run. Lines 27 and 93 correspond to the action and trigger shim URIs respectively, edit them to point to the action and trigger shims respectively.
 
 Run the NodeJS TAP by navigating to `/home/riscv/baseline-tap` and running:
 
-``` sudo /home/riscv/nodejs/node-v14.8.0-linux-riscv64/bin/node server.js > tap_baseline_<TypeScript_fname>.log```
+``` 
+sudo /home/riscv/nodejs/node-v14.8.0-linux-riscv64/bin/node server.js > tap_baseline_<TypeScript_fname>.log
+```
 
 To start sending event notifications, open a terminal to the trigger shim machine and run:
 
-`$ cd wrk`
-`$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > tap_baseline_<TypeScript_fname>.<num_connections>_<num_threads>.log`
+```
+$ cd wrk
+$ ./wrk -c<num_connections> -t<num_threads> -d10 -s test.lua http://<board_hostname>:80/event_notify/ > tap_baseline_<TypeScript_fname>.<num_connections>_<num_threads>.log
+```
 
 where `{(<num_connections>, <num_threads>)} can be {(1, 1), (2, 2), (3, 3)}` (See Figure 5).
 
-After every run of `wrk`, statistics of the run are printed which are redirected to `spigot_base_<TypeScript_fname>.<num_connections>_<num_threads>.log`. The `Requests/sec:` row is taken as the throughput while the `Latency:` under thread stats is taken as the average request latency per run.
+After every run of `wrk`, statistics of the run are printed which are redirected to ```spigot_base_<TypeScript_fname>.<num_connections>_<num_threads>.log```. The `Requests/sec:` row is taken as the throughput while the `Latency:` under thread stats is taken as the average request latency per run.
 
 
 ### Memory Usage of Enclaves
@@ -144,7 +176,9 @@ When `server.js` is launched, the `rss` field that is printed out shows the resi
 
 ## Building (For Running Compilation Functionality Evaluation) <a name="compiler"></a>
 Clone the repository on the build machine using:
-```git clone https://github.com/multifacet/tap_artifact```
+```
+git clone https://github.com/multifacet/tap_artifact
+```
 
 **Warning** Building the docker container requires atleast 30 GB of free space in the local docker cache. Install docker following the [instructions](https://docs.docker.com/engine/install/) for the build machine's distro.
 
@@ -152,7 +186,9 @@ Clone the repository on the build machine using:
 
 Build the Qemu docker container using:
 
-```docker build --build-arg triggerHostname=<trigger_hostname> --build-arg triggerPort=80 --build-arg actionHostname=<action_hostname> --build-arg actionPort=80 -t dsirone/tapdance:latest .```
+```
+docker build --build-arg triggerHostname=<trigger_hostname> --build-arg triggerPort=80 --build-arg actionHostname=<action_hostname> --build-arg actionPort=80 -t dsirone/tapdance:latest .
+```
 
 This will build the Qemu container having all the benchmark applet enclaves configured to pull data from the trigger service and push data to the action service.
 
@@ -161,13 +197,15 @@ This will build the Qemu container having all the benchmark applet enclaves conf
 
 This step assumes that you have built the Qemu docker container in the previous step. Run the docker container using:
 
-``` docker run --rm -it -p 7022:7022 -p 7080:7080 -p 7777:7777 dsirone/tapdance:latest bash ```
+``` 
+docker run --rm -it -p 7022:7022 -p 7080:7080 -p 7777:7777 dsirone/tapdance:latest bash 
+```
 
 Navigate to the applets repo and run the applet compilation test script:
 
-`$ cd /build/tap-apps`
-
-
-`$ ./check_applets.sh $(pwd)/all_applets`
+```
+$ cd /build/tap-apps
+$ ./check_applets.sh $(pwd)/all_applets
+```
 
 This will try to compile all the applets into LLVM IR using [StaticScript](https://github.com/deepaksirone/StaticScript) and print out the resulting statistics
