@@ -22,3 +22,6 @@
 [submodule "static_script_runtime"]
 	path = static_script_runtime
 	url = https://github.com/deepaksirone/static_script_runtime
+[submodule "tap-apps"]
+	path = tap-apps
+	url = https://github.com/deepaksirone/tap-apps
