@@ -13,15 +13,35 @@ The functionality claims that are validated by the artifact include:
 
 ## Contents
 1. [Pre-Build](#pre-build)
-2. [Setting up Trigger Shim](#trigger-shim)
-3. [Setting up Action Shim](#action-shim)
-4. [Running Spigot Benchmarks on Real Hardware](#spigot)
-6. [Building (For Running Compilation Functionality Evaluation)](#compiler)
-7. [Running the Compiler Functionality Test using Docker](#compiler-docker)
+2. [Building Binaries with Docker](#build)
+3. [Setting up Trigger Shim](#trigger-shim)
+4. [Setting up Action Shim](#action-shim)
+5. [Running Spigot Benchmarks on Real Hardware](#spigot) 
+6. [Running the Compiler Functionality Test using Docker](#compiler-docker)
 
 
 ## Pre-Build (For Running using Qemu and Running on Real H/W) <a name="pre-build"></a>
 Provision 2 machines running Ubuntu 18.04 LTS for the trigger and action shims. Both the machines should have a publicly addressable hostname. For artifact evaluation purposes, the authors will be providing these servers.
+
+## Building (For Building Artifact Binaries and Running Compilation Functionality Evaluation) <a name="build"></a>
+Clone the repository on the build machine using:
+```
+git clone https://github.com/multifacet/tap_artifact
+```
+
+**Warning** Building the docker container requires atleast 30 GB of free space in the local docker cache. Install docker following the [instructions](https://docs.docker.com/engine/install/) for the build machine's distro.
+
+**The build step takes 40-60 minutes**
+
+Build the Qemu docker container using:
+
+```
+docker build --build-arg triggerHostname=<trigger_hostname> --build-arg triggerPort=80 --build-arg actionHostname=<action_hostname> --build-arg actionPort=80 -t dsirone/tapdance:latest .
+```
+
+This will build the Qemu container having all the benchmark applet enclaves configured to pull data from the trigger service and push data to the action service. 
+
+The `/build/bin` subdirectory contains all the binaries that should be run on the board.
 
 
 ## Setting up Trigger Shim <a name="trigger-shim"></a>
@@ -174,24 +194,6 @@ When `server.js` is launched, the `rss` field that is printed out shows the resi
 
 `spigot_<TypeScript_fname>.log` and `spigot_base_<TypeScript_fname>.log` have an "Enclave Exec time: " field that can be averaged to find the average execution time of an enclave execution for spigot with and without enclaves respectively. `tap_baseline_<TypeScript_fname>.log` has an "applet_exec_time" that can be averaged to find the applet execution time.
 
-## Building (For Running Compilation Functionality Evaluation) <a name="compiler"></a>
-Clone the repository on the build machine using:
-```
-git clone https://github.com/multifacet/tap_artifact
-```
-
-**Warning** Building the docker container requires atleast 30 GB of free space in the local docker cache. Install docker following the [instructions](https://docs.docker.com/engine/install/) for the build machine's distro.
-
-**The build step takes 40-60 minutes**
-
-Build the Qemu docker container using:
-
-```
-docker build --build-arg triggerHostname=<trigger_hostname> --build-arg triggerPort=80 --build-arg actionHostname=<action_hostname> --build-arg actionPort=80 -t dsirone/tapdance:latest .
-```
-
-This will build the Qemu container having all the benchmark applet enclaves configured to pull data from the trigger service and push data to the action service.
-
 
 ## Running the Compiler Functionality Test using Docker <a name="compiler-docker"></a>
 
@@ -209,3 +211,7 @@ $ ./check_applets.sh $(pwd)/all_applets
 ```
 
 This will try to compile all the applets into LLVM IR using [StaticScript](https://github.com/deepaksirone/StaticScript) and print out the resulting statistics
+
+
+## Summarizing Performance Results
+
