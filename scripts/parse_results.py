@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-# Parses Spigot log files and spits out:
+# Parses Spigot enclave log files and spits out:
 # (i) Avg Applet Execution time (ii) Applet memory usage (iii) Enclave startup time
 
 import sys
+import statistics
 from parse import parse
 
 def usage():
@@ -25,7 +26,6 @@ def parse_memory_usage(lines: list[str]):
             res = parse("Requesting {} pages from the kernel", line_stripped)
             return res.fixed[0]
 
-
 def parse_applet_exec_time(lines: list[str], line_prefix: str):
     res = []
     for line in lines:
@@ -34,14 +34,27 @@ def parse_applet_exec_time(lines: list[str], line_prefix: str):
             res = res + [conv_to_secs(exec_time)]
     return res
 
+def parse_enclave_startup_time(lines: list[str]):
+    res = []
+    for line in lines:
+        if line.startswith("Enclave Init time:"):
+            encl_init_time = line.split("Enclave Init time:")[1].strip()
+            res = res + [conv_to_secs(encl_init_time)]
+    return res[0]
 
 def main():
     filename = sys.argv[1]
     lines = open(filename, "r+").readlines()
 
-    res = parse_applet_exec_time(lines, "")
-    print (res)
-    res = parse_memory_usage(lines)
-    print (res)
+    applet_exec_times = parse_applet_exec_time(lines, "")
+    applet_exec_avg = statistics.fmean(applet_exec_times)
+    applet_exec_stdev = statistics.stdev(applet_exec_times)
+
+    mem_usage = float(parse_memory_usage(lines))
+    encl_startup_time = float(parse_enclave_startup_time(lines))
+    
+    print ("Applet Execution Time, Avg: %f seconds and Stdev: %f seconds" % (applet_exec_avg, applet_exec_stdev))
+    print ("Applet Memory Usage: %f pages = %f MB" % (mem_usage, mem_usage * 4.0 * (1/1024.0)))
+    print ("Enclave Startup Time: %f seconds" % (encl_startup_time))
 
 main()
