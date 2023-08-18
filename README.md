@@ -214,7 +214,7 @@ This will try to compile all the applets into LLVM IR using [StaticScript](https
 
 
 ## Summarizing Performance Results
-This section describes how to reproduce the various performance claims made in the paper.
+This section describes how to reproduce the various performance claims made in the paper. Please make sure that you have Python 3.8+ installed.
 
 ### Summarizing the End to End Latency Results
 
