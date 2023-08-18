@@ -222,7 +222,7 @@ Copy all the logfiles from the `wrk` runs for a particular configuration (e.g. (
 
 Run the following:
 ```
-python3 parse_wrk_dir.py <wrk_logdir>
+python3 scripts/parse_wrk_dir.py <wrk_logdir>
 ``` 
 where `wrk_logdirdir` is the log directory for a particular configuration, to obtain the latency and throughput for the particular configuration (e.g. (spigot, 1 thread, 1 connection)).
 
@@ -233,7 +233,7 @@ Copy all the logfiles (e.g. spigot_<TypeScript_fname>.log) from the runs of spig
 Run the following:
 
 ```
-python3 parse_logfile_dir.py <log_dir> <log_type>
+python3 scripts/parse_applet_logdir.py <log_dir> <log_type>
 ``` 
 where `log_dir` is the log directory for either spigot, spigot_base or the baseline TAP and `log_type` is either `spigot`, `spigot_base` or `baseline_tap` respectively depending on `log_dir`. This will print out the average applet execution time and the average memory usage of all the applets.
 
