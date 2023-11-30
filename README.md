@@ -10,6 +10,8 @@ The performance claims that are validated by the artifact include:
 The functionality claims that are validated by the artifact include:
 1. Compilation of 642 out of a total of 682 applets from the minTAP dataset (Section 7, Functionality Evaluation)
 
+Artifact Status:
+![Artifact Status](images/badge-AFR.jpg =200x100)
 
 ## Contents
 1. [Artifact Overview](#overview)
@@ -17,7 +19,7 @@ The functionality claims that are validated by the artifact include:
 3. [Building Binaries with Docker](#build)
 4. [Setting up Trigger Shim](#trigger-shim)
 5. [Setting up Action Shim](#action-shim)
-6. [Running Spigot Benchmarks on Real Hardware](#spigot) 
+6. [Running Spigot Benchmarks on Real Hardware](#spigot)
 7. [Running the Compiler Functionality Test using Docker](#compiler-docker)
 
 ## Artifact Overview <a name="overview"></a>
@@ -57,7 +59,7 @@ Build the Qemu docker container using:
 docker build --build-arg triggerHostname=<trigger_hostname> --build-arg triggerPort=80 --build-arg actionHostname=<action_hostname> --build-arg actionPort=80 -t dsirone/tapdance:latest .
 ```
 
-This will build the Qemu container having all the benchmark applet enclaves configured to pull data from the trigger service and push data to the action service. 
+This will build the Qemu container having all the benchmark applet enclaves configured to pull data from the trigger service and push data to the action service.
 
 The `/build/bin` subdirectory contains all the binaries that should be run on the board.
 
@@ -106,7 +108,7 @@ sudo python3.7 server.py 0.0.0.0 80
 
 **This step requires 5-10 mins**
 
-This subsection assumes access to the StarFive VisionFive SBC (referred to as the board) preloaded with all the benchmark applets at `/home/riscv/artifact_eval`. All the enclave benchmark packages (the 10 chosen for evaluation) are located at `/home/riscv/artifact_eval/benchmarks_prebuilt`. All the files starting with `enc_rule_<TypeScript_fname>.ke` are Spigot applet enclave packages corresponding to the TypeScript applet \<TypeScript_fname\> . All the files starting with `rule_process_<TypeScript_fname>.ke` are Spigot benchmark packages that do not use enclaves. 
+This subsection assumes access to the StarFive VisionFive SBC (referred to as the board) preloaded with all the benchmark applets at `/home/riscv/artifact_eval`. All the enclave benchmark packages (the 10 chosen for evaluation) are located at `/home/riscv/artifact_eval/benchmarks_prebuilt`. All the files starting with `enc_rule_<TypeScript_fname>.ke` are Spigot applet enclave packages corresponding to the TypeScript applet \<TypeScript_fname\> . All the files starting with `rule_process_<TypeScript_fname>.ke` are Spigot benchmark packages that do not use enclaves.
 
 The corresponding TypeScript benchmarks are located in the `tap-apps/benchmark_applets` submodule of this repository.
 
@@ -127,7 +129,7 @@ $ ./ntp_client.ke
 Start the Keystore by running:
 
 ```
-$ cd keystore 
+$ cd keystore
 $ ./keystore.ke
 ```
 
@@ -137,7 +139,7 @@ The Keystore will listen on port 7777 on the board. All the benchmark rules are 
 
 **This step requires 40 mins - 1.5 hours**
 
-Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using 
+Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using
 
 ```
 $ sudo ./enc_rule_<TypeScript_fname>.ke > spigot_<TypeScript_fname>.log
@@ -149,7 +151,7 @@ To start sending event notifications, open a terminal to the trigger shim machin
 
 ```
 $ cd wrk
-$ ./run_wrk.sh spigot <TypeScript_fname> 
+$ ./run_wrk.sh spigot <TypeScript_fname>
 ```
 
 This will generate logfiles of the form `spigot_<TypeScript_fname>.<num_connections>_<num_threads>.log` where `{(<num_connections>, <num_threads>)} are {(1, 1), (2, 2), (3, 3)}` (See Figure 5). After every run of `wrk` restart the enclave by Ctrl^C (a few times) followed by:
@@ -165,7 +167,7 @@ After every run of `wrk`, statistics of the run are printed which are redirected
 
 **This step requires 40 mins - 1.5 hours**
 
-Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using 
+Make sure that the trigger and action shims are setup and running. The trigger shim should be running with the `--encrypted` flag. Select the package for a benchmark and run it using
 
 ```
 $ sudo ./rule_process_<TypeScript_fname>.ke > spigot_base_<TypeScript_fname>.log
@@ -200,7 +202,7 @@ sudo python3.7 server.py 0.0.0.0 80
 
 Run the NodeJS TAP by navigating to `/home/riscv/artifact_eval/baseline-tap` and running:
 
-``` 
+```
 ./run_server.sh <TypeScript_applet_id>
 ```
 where `<TypeScript_applet_id>` is the prefix before `.json.ts` of the applet file.
@@ -238,8 +240,8 @@ When `server.js` is launched, the `rss` field that is printed out shows the resi
 
 This step assumes that you have built the Qemu docker container in the previous step. Run the docker container using:
 
-``` 
-docker run --rm -it -p 7022:7022 -p 7080:7080 -p 7777:7777 dsirone/tapdance:latest bash 
+```
+docker run --rm -it -p 7022:7022 -p 7080:7080 -p 7777:7777 dsirone/tapdance:latest bash
 ```
 
 Navigate to the applets repo and run the applet compilation test script:
@@ -264,7 +266,7 @@ Copy all the logfiles from the `wrk` runs for a particular configuration (e.g. (
 Run the following:
 ```
 python3 scripts/parse_wrk_dir.py <wrk_logdir>
-``` 
+```
 where `wrk_logdirdir` is the log directory for a particular configuration, to obtain the latency and throughput for the particular configuration (e.g. (spigot, 1 thread, 1 connection)).
 
 ### Summarizing Applet Execution Times
@@ -275,6 +277,5 @@ Run the following:
 
 ```
 python3 scripts/parse_applet_logdir.py <log_dir> <log_type>
-``` 
+```
 where `log_dir` is the log directory for either spigot, spigot_base or the baseline TAP and `log_type` is either `spigot`, `spigot_base` or `baseline_tap` respectively depending on `log_dir`. This will print out the average applet execution time and the average memory usage of all the applets.
-
