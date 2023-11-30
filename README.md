@@ -10,8 +10,8 @@ The performance claims that are validated by the artifact include:
 The functionality claims that are validated by the artifact include:
 1. Compilation of 642 out of a total of 682 applets from the minTAP dataset (Section 7, Functionality Evaluation)
 
-Artifact Status:
-![Artifact Status](images/badge-AFR.jpg =200x100)
+Artifact Badges:
+![Artifact Status](images/badge-AFR.jpg)
 
 ## Contents
 1. [Artifact Overview](#overview)
