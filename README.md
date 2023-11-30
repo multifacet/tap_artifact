@@ -1,5 +1,8 @@
 # Artifact for TAPDance - NDSS '24
 
+
+<img src="images/badge-AFR.jpg" style="width: 100px"></img>
+
 This repository contains the code to reproduce the experiments for the paper: [Architecting Trigger-Action Platforms for Security, Performance and Functionality](https://pages.cs.wisc.edu/~dsirone/papers/tapdance_ndss.pdf). The paper's results were obtained by running on a [StarFive VisonFive SBC](https://doc-en.rvspace.org/Doc_Center/visionfive.html) and this repository provides instructions to run the benchmarks on real hardware as well as in an emulated Qemu environment. For conducting the experiments using Qemu, 3 networked machines running Ubuntu 18.04 LTS is required. Building the Docker container needed to run Qemu needs a machine with atleast 30 GB of free space for the docker cache.
 
 The performance claims that are validated by the artifact include:
@@ -10,8 +13,6 @@ The performance claims that are validated by the artifact include:
 The functionality claims that are validated by the artifact include:
 1. Compilation of 642 out of a total of 682 applets from the minTAP dataset (Section 7, Functionality Evaluation)
 
-Artifact Badges:
-![Artifact Status](images/badge-AFR.jpg)
 
 ## Contents
 1. [Artifact Overview](#overview)
